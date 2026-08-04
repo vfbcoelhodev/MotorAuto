@@ -18,7 +18,7 @@ class Veiculo:
     _observacoes: str | None = None
 
     # Gerados automaticamente
-    id: int | None = field(default=None, init=False)
+    _id: int | None = field(default=None, init=False)
 
     def __post_init__(self) -> None:
         self._preparar_atributos()
@@ -75,6 +75,10 @@ class Veiculo:
     @property
     def observacoes(self) -> str | None:
         return self._observacoes
+    
+    @property
+    def id(self) -> int | None:
+        return self._id
 
     def corrigir_marca(self, nova_marca: str) -> None:
         self._marca = self._validar_texto_obrigatorio(
