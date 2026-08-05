@@ -462,6 +462,10 @@ As funções permitidas são Mecânico, Atendente, Gerente e Auxiliar.
 
 Clientes e profissionais deverão ser desativados em vez de excluídos quando possuírem histórico associado.
 
+## DT-012 — Condições salariais e comissões
+ 
+ A entidade Profissional não armazenará informações salariais ou de comissão. Esses dados farão parte de um futuro módulo de gestão de pessoas ou contratos, preservando o histórico contratual e mantendo a responsabilidade da entidade focada no cadastro do profissional.
+ 
 ---
 
 # Histórico de implementação
