@@ -6,4 +6,5 @@ class FormaPagamento(Enum):
     PIX = "Pix"
     CARTAO_DEBITO = "Cartão de débito"
     CARTAO_CREDITO = "Cartão de crédito"
+    CREDITO_CLIENTE = "Crédito do cliente"
     
