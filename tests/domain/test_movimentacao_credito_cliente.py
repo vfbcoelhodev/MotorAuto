@@ -232,4 +232,39 @@ def test_nao_deve_criar_movimentacao_com_observacoes_invalidas() -> None:
             _observacoes=123,  # ty: ignore[invalid-argument-type]
         )
 
-        
+
+def test_deve_criar_movimentacao_de_ajuste_os_valida(
+    ordem_servico: OrdemServico,
+) -> None:
+    movimentacao = MovimentacaoCreditoCliente(
+        _valor=Decimal("100.00"),
+        _tipo=TipoMovimentacaoCredito.AJUSTE_OS,
+        _ordem_servico=ordem_servico,
+    )
+
+    assert movimentacao.valor == Decimal("100.00")
+    assert movimentacao.tipo is TipoMovimentacaoCredito.AJUSTE_OS
+    assert movimentacao.ordem_servico is ordem_servico
+    assert movimentacao.forma_origem is None
+
+
+def test_ajuste_os_deve_exigir_ordem_servico() -> None:
+    with pytest.raises(ValueError):
+        MovimentacaoCreditoCliente(
+            _valor=Decimal("100.00"),
+            _tipo=TipoMovimentacaoCredito.AJUSTE_OS,
+            _ordem_servico=None,
+        )
+
+
+def test_ajuste_os_nao_deve_aceitar_forma_origem(
+    ordem_servico: OrdemServico,
+) -> None:
+    with pytest.raises(ValueError):
+        MovimentacaoCreditoCliente(
+            _valor=Decimal("100.00"),
+            _tipo=TipoMovimentacaoCredito.AJUSTE_OS,
+            _forma_origem=FormaPagamento.PIX,
+            _ordem_servico=ordem_servico,
+        )
+               

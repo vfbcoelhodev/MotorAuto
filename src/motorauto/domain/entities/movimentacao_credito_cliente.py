@@ -89,10 +89,14 @@ class MovimentacaoCreditoCliente:
         ordem_servico: OrdemServico | None,
         tipo_movimentacao: TipoMovimentacaoCredito,
     ) -> OrdemServico | None:
-        if tipo_movimentacao is TipoMovimentacaoCredito.USO_EM_OS:
+        if tipo_movimentacao in {
+            TipoMovimentacaoCredito.USO_EM_OS,
+            TipoMovimentacaoCredito.AJUSTE_OS,
+        }:
             if ordem_servico is None:
                 raise ValueError(
-                    "O campo ordem_servico é obrigatório para uma movimentação de uso em OS."
+                    "O campo ordem_servico é obrigatório "
+                    "para este tipo de movimentação."
                 )
 
             if not isinstance(ordem_servico, OrdemServico):
@@ -104,22 +108,24 @@ class MovimentacaoCreditoCliente:
 
         if ordem_servico is not None:
             raise ValueError(
-                "O campo ordem_servico deve ser None para este tipo de movimentação."
+                "O campo ordem_servico deve ser None "
+                "para este tipo de movimentação."
             )
 
         return None
-
-
     @staticmethod
     def _validar_forma_origem(
         forma_origem: FormaPagamento | None,
         tipo_movimentacao: TipoMovimentacaoCredito,
     ) -> FormaPagamento | None:
-        if tipo_movimentacao is TipoMovimentacaoCredito.USO_EM_OS:
+        if tipo_movimentacao in {
+            TipoMovimentacaoCredito.USO_EM_OS,
+            TipoMovimentacaoCredito.AJUSTE_OS,
+        }:
             if forma_origem is not None:
                 raise ValueError(
                     "O campo forma_origem deve ser None "
-                    "para uma movimentação de uso em OS."
+                    "para este tipo de movimentação."
                 )
 
             return None
@@ -137,8 +143,7 @@ class MovimentacaoCreditoCliente:
 
         if forma_origem is FormaPagamento.CREDITO_CLIENTE:
             raise ValueError(
-                "Crédito do cliente não pode ser usado como forma de origem "
-                "de uma movimentação de crédito ou devolução."
+                "Crédito do cliente não pode ser usado como forma de origem."
             )
 
         return forma_origem

@@ -343,3 +343,77 @@ def test_deve_permitir_utilizar_todo_o_saldo(
 
     assert conta.saldo == Decimal("0.00")
 
+
+def test_deve_registrar_ajuste_os_e_aumentar_saldo(
+    conta: ContaCreditoCliente,
+    cliente: Cliente,
+) -> None:
+    veiculo = Veiculo(
+        _cliente=cliente,
+        _marca="Fiat",
+        _modelo="Palio",
+    )
+
+    ordem_servico = OrdemServico(
+        _cliente=cliente,
+        _veiculo=veiculo,
+        _defeito_relatado="Barulho na suspensão.",
+    )
+
+    ajuste = MovimentacaoCreditoCliente(
+        _valor=Decimal("100.00"),
+        _tipo=TipoMovimentacaoCredito.AJUSTE_OS,
+        _ordem_servico=ordem_servico,
+    )
+
+    conta.registrar_ajuste_os(ajuste)
+
+    assert conta.saldo == Decimal("100.00")
+    assert conta.movimentacoes == (ajuste,)
+
+
+def test_nao_deve_registrar_ajuste_os_de_outro_cliente(
+    conta: ContaCreditoCliente,
+) -> None:
+    outro_cliente = Cliente(
+        _nome="Maria",
+        _telefone="31988888888",
+    )
+
+    outro_veiculo = Veiculo(
+        _cliente=outro_cliente,
+        _marca="Volkswagen",
+        _modelo="Gol",
+    )
+
+    outra_os = OrdemServico(
+        _cliente=outro_cliente,
+        _veiculo=outro_veiculo,
+        _defeito_relatado="Motor falhando.",
+    )
+
+    ajuste = MovimentacaoCreditoCliente(
+        _valor=Decimal("100.00"),
+        _tipo=TipoMovimentacaoCredito.AJUSTE_OS,
+        _ordem_servico=outra_os,
+    )
+
+    with pytest.raises(ValueError):
+        conta.registrar_ajuste_os(ajuste)
+
+    assert conta.saldo == Decimal("0.00")
+    assert conta.movimentacoes == ()
+
+
+def test_registrar_ajuste_os_deve_rejeitar_tipo_incorreto(
+    conta: ContaCreditoCliente,
+) -> None:
+    credito = MovimentacaoCreditoCliente(
+        _valor=Decimal("100.00"),
+        _tipo=TipoMovimentacaoCredito.CREDITO,
+        _forma_origem=FormaPagamento.PIX,
+    )
+
+    with pytest.raises(ValueError):
+        conta.registrar_ajuste_os(credito)
+        

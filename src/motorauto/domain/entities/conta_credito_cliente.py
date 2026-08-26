@@ -36,14 +36,18 @@ class ContaCreditoCliente:
     @property
     def saldo(self) -> Decimal:
         total_creditos = sum(
-            (
-                movimentacao.valor
-                for movimentacao in self._movimentacoes
-                if movimentacao.tipo is TipoMovimentacaoCredito.CREDITO
-            ),
-            Decimal("0.00"),
-        )
-
+        (
+            movimentacao.valor
+            for movimentacao in self._movimentacoes
+            if movimentacao.tipo
+            in {
+                TipoMovimentacaoCredito.CREDITO,
+                TipoMovimentacaoCredito.AJUSTE_OS,
+            }
+        ),
+        Decimal("0.00"),
+    )
+    
         total_debitos = sum(
             (
                 movimentacao.valor
@@ -122,6 +126,29 @@ class ContaCreditoCliente:
             )
 
         self._movimentacoes.append(movimentacao)
+
+    def registrar_ajuste_os(
+            self,
+            movimentacao: MovimentacaoCreditoCliente,
+    ) -> None:
+            movimentacao = self._validar_movimentacao(movimentacao)
+    
+            if movimentacao.tipo is not TipoMovimentacaoCredito.AJUSTE_OS:
+                raise ValueError(
+                    "Somente uma movimentação do tipo AJUSTE_OS "
+                    "pode ser registrada como ajuste de OS."
+                )
+    
+            if (
+                movimentacao.ordem_servico is None
+                or movimentacao.ordem_servico.cliente is not self._cliente
+            ):
+                raise ValueError(
+                    "A Ordem de Serviço informada não pertence "
+                    "ao cliente desta conta de crédito."
+                )
+    
+            self._movimentacoes.append(movimentacao)
 
     @staticmethod
     def _validar_cliente(cliente: Cliente) -> Cliente:
