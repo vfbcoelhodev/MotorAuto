@@ -1424,3 +1424,64 @@ def test_os_entregue_nao_deve_permitir_alterar_itens(
         )
 
 
+def test_deve_registrar_pagamento_com_credito_cliente(
+    ordem_servico: OrdemServico,
+    item_peca: ItemPeca,
+) -> None:
+    ordem_servico.adicionar_item_peca(item_peca)
+    ordem_servico.aprovar_item_peca(item_peca)
+
+    pagamento = Pagamento(
+        _valor=Decimal("20.00"),
+        _forma_pagamento=FormaPagamento.CREDITO_CLIENTE,
+    )
+
+    ordem_servico.registrar_pagamento_com_credito_cliente(
+        pagamento
+    )
+
+    assert ordem_servico.pagamentos == (pagamento,)
+    assert ordem_servico.total_recebido == Decimal("20.00")
+    assert ordem_servico.saldo_restante == Decimal("10.00")
+
+
+def test_registrar_pagamento_com_credito_cliente_deve_rejeitar_outra_forma(
+    ordem_servico: OrdemServico,
+    item_peca: ItemPeca,
+) -> None:
+    ordem_servico.adicionar_item_peca(item_peca)
+    ordem_servico.aprovar_item_peca(item_peca)
+
+    pagamento = Pagamento(
+        _valor=Decimal("20.00"),
+        _forma_pagamento=FormaPagamento.PIX,
+    )
+
+    with pytest.raises(ValueError):
+        ordem_servico.registrar_pagamento_com_credito_cliente(
+            pagamento
+        )
+
+    assert ordem_servico.total_recebido == Decimal("0.00")
+
+
+def test_pagamento_com_credito_cliente_nao_deve_ultrapassar_total_final(
+    ordem_servico: OrdemServico,
+    item_peca: ItemPeca,
+) -> None:
+    ordem_servico.adicionar_item_peca(item_peca)
+    ordem_servico.aprovar_item_peca(item_peca)
+
+    pagamento = Pagamento(
+        _valor=Decimal("30.01"),
+        _forma_pagamento=FormaPagamento.CREDITO_CLIENTE,
+    )
+
+    with pytest.raises(ValueError):
+        ordem_servico.registrar_pagamento_com_credito_cliente(
+            pagamento
+        )
+
+    assert ordem_servico.total_recebido == Decimal("0.00")
+
+    

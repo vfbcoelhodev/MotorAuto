@@ -470,6 +470,36 @@ class OrdemServico:
 
         self._pagamentos.append(pagamento)
     
+    def registrar_pagamento_com_credito_cliente(
+        self,
+        pagamento: Pagamento,
+    ) -> None:
+        if not isinstance(pagamento, Pagamento):
+            raise TypeError(
+                "O pagamento informado deve ser do tipo Pagamento."
+            )
+
+        if pagamento.forma_pagamento is not FormaPagamento.CREDITO_CLIENTE:
+            raise ValueError(
+                "Este comportamento aceita somente pagamentos "
+                "com crédito do cliente."
+            )
+
+        if self.saldo_restante == Decimal("0.00"):
+            raise ValueError(
+                "A Ordem de Serviço não possui saldo a receber."
+            )
+
+        novo_total_recebido = self.total_recebido + pagamento.valor
+
+        if novo_total_recebido > self.total_final:
+            raise ValueError(
+                "A soma dos pagamentos não pode ultrapassar "
+                "o TOTAL FINAL DA OS."
+            )
+
+        self._pagamentos.append(pagamento)
+        
     def retornar_para_diagnostico(self) -> None:
         if self._status not in {
             StatusOrdemServico.AGUARDANDO_APROVACAO,
