@@ -15,7 +15,7 @@ class Profissional:
     _observacoes: str | None = None
 
     # Gerados automaticamente
-    _id: int | None = field(default=None, init=False)
+    id: int | None = field(default=None, init=False)
     _data_cadastro: datetime = field(default_factory=datetime.now, init=False)
     _ativo: bool = field(default=True, init=False)
 
@@ -54,10 +54,6 @@ class Profissional:
     @property
     def observacoes(self) -> str | None:
         return self._observacoes   
-    
-    @property
-    def id(self) -> int | None:
-        return self._id
     
     @property
     def data_cadastro(self) -> datetime:
