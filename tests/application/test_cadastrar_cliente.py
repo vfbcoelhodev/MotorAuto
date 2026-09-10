@@ -4,7 +4,7 @@ from motorauto.application.services.cliente import (
     atualizar_cliente,
     buscar_cliente_por_id,
     cadastrar_cliente,
-    listar_clientes,
+    listar_clientes, desativar_cliente, ativar_cliente,
 )
 from motorauto.domain.entities.cliente import Cliente
 from motorauto.infrastructure.repositories.cliente_memoria import (
@@ -498,3 +498,84 @@ def test_atualizar_cliente_nao_deve_manter_alteracao_parcial_em_caso_de_erro(
 
     assert cliente_encontrado.nome == "João"
     assert cliente_encontrado.telefone == "31999999999"
+
+
+def test_deve_desativar_cliente(
+    repositorio: RepositorioClienteEmMemoria,
+) -> None:
+    cliente = cadastrar_cliente(
+        repositorio,
+        nome="João",
+        telefone="31999999999",
+    )
+
+    assert cliente.id is not None
+
+    cliente_desativado = desativar_cliente(
+        repositorio,
+        cliente.id,
+    )
+
+    assert cliente_desativado.ativo is False
+
+
+def test_deve_ativar_cliente(
+    repositorio: RepositorioClienteEmMemoria,
+) -> None:
+    cliente = cadastrar_cliente(
+        repositorio,
+        nome="João",
+        telefone="31999999999",
+    )
+
+    assert cliente.id is not None
+
+    desativar_cliente(
+        repositorio,
+        cliente.id,
+    )
+
+    cliente_ativado = ativar_cliente(
+        repositorio,
+        cliente.id,
+    )
+
+    assert cliente_ativado.ativo is True
+
+
+def test_desativar_cliente_deve_persistir_alteracao(
+    repositorio: RepositorioClienteEmMemoria,
+) -> None:
+    cliente = cadastrar_cliente(
+        repositorio,
+        nome="João",
+        telefone="31999999999",
+    )
+
+    assert cliente.id is not None
+
+    desativar_cliente(
+        repositorio,
+        cliente.id,
+    )
+
+    cliente_encontrado = buscar_cliente_por_id(
+        repositorio,
+        cliente.id,
+    )
+
+    assert cliente_encontrado.ativo is False
+
+
+def test_desativar_cliente_deve_rejeitar_id_inexistente(
+    repositorio: RepositorioClienteEmMemoria,
+) -> None:
+    with pytest.raises(
+        ValueError,
+        match="Cliente não encontrado.",
+    ):
+        desativar_cliente(
+            repositorio,
+            cliente_id=999,
+        )
+        

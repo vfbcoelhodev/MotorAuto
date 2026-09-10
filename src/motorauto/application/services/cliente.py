@@ -106,3 +106,33 @@ def atualizar_cliente(
 
     return cliente
    
+
+def ativar_cliente(
+    repositorio: RepositorioCliente,
+    cliente_id: int,
+) -> Cliente:
+    cliente = buscar_cliente_por_id(
+        repositorio,
+        cliente_id,
+    )
+
+    cliente.ativar()
+    repositorio.atualizar(cliente)
+
+    return cliente
+
+
+def desativar_cliente(
+    repositorio: RepositorioCliente,
+    cliente_id: int,
+) -> Cliente:
+    cliente = buscar_cliente_por_id(
+        repositorio,
+        cliente_id,
+    )
+
+    cliente.desativar()
+    repositorio.atualizar(cliente)
+
+    return cliente
+    
