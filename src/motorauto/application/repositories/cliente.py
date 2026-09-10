@@ -12,3 +12,6 @@ class RepositorioCliente(Protocol):
 
     def listar(self) -> tuple[Cliente, ...]:
         ...
+    
+    def atualizar(self, cliente: Cliente) -> None:
+        ...

@@ -42,3 +42,24 @@ class RepositorioClienteEmMemoria:
 
     def listar(self) -> tuple[Cliente, ...]:
         return tuple(self._clientes)
+    
+
+    def atualizar(self, cliente: Cliente) -> None:
+        if not isinstance(cliente, Cliente):
+            raise TypeError(
+                "O cliente informado deve ser do tipo Cliente."
+            )
+
+        if cliente.id is None:
+            raise ValueError(
+                "O cliente informado deve possuir ID."
+            )
+
+        for i, cliente_existente in enumerate(self._clientes):
+            if cliente_existente.id == cliente.id:
+                self._clientes[i] = cliente
+                return
+     
+        raise ValueError(
+        "Cliente não encontrado no repositório."
+        )

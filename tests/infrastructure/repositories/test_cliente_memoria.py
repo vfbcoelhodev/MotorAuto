@@ -135,3 +135,70 @@ def test_nao_deve_adicionar_cliente_que_ja_possui_id(
 
     assert repositorio.listar() == ()
     
+
+def test_deve_atualizar_cliente_existente() -> None:
+    repositorio = RepositorioClienteEmMemoria()
+
+    cliente = Cliente(
+        _nome="João",
+        _telefone="31999999999",
+    )
+
+    repositorio.adicionar(cliente)
+
+    cliente_atualizado = Cliente(
+        _nome="João da Silva",
+        _telefone="31888888888",
+    )
+    cliente_atualizado.id = cliente.id
+
+    repositorio.atualizar(cliente_atualizado)
+
+    assert cliente.id is not None
+
+    cliente_encontrado = repositorio.buscar_por_id(cliente.id)
+
+    assert cliente_encontrado is cliente_atualizado
+
+
+def test_atualizar_deve_rejeitar_objeto_que_nao_seja_cliente() -> None:
+    repositorio = RepositorioClienteEmMemoria()
+
+    with pytest.raises(
+        TypeError,
+        match="O cliente informado deve ser do tipo Cliente.",
+    ):
+        repositorio.atualizar("cliente inválido")  # ty: ignore[invalid-argument-type]
+
+
+def test_atualizar_deve_rejeitar_cliente_sem_id() -> None:
+    repositorio = RepositorioClienteEmMemoria()
+
+    cliente = Cliente(
+        _nome="João",
+        _telefone="31999999999",
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="O cliente informado deve possuir ID.",
+    ):
+        repositorio.atualizar(cliente)
+
+
+def test_atualizar_deve_rejeitar_cliente_com_id_inexistente() -> None:
+    repositorio = RepositorioClienteEmMemoria()
+
+    cliente = Cliente(
+        _nome="João",
+        _telefone="31999999999",
+    )
+    cliente.id = 999
+
+    with pytest.raises(
+        ValueError,
+        match="Cliente não encontrado no repositório.",
+    ):
+        repositorio.atualizar(cliente)
+
+
