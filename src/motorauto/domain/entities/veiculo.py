@@ -145,6 +145,11 @@ class Veiculo:
         if placa is None:
             return None
 
+        if not isinstance(placa, str):
+            raise TypeError(
+                "A placa do veículo deve ser do tipo str ou None."
+            )
+            
         placa = placa.strip().replace(" ", "").replace("-", "").upper()
 
         if not placa:
@@ -156,6 +161,11 @@ class Veiculo:
     def _normalizar_texto_opcional(valor: str | None) -> str | None:
         if valor is None:
             return None
+
+        if not isinstance(valor, str):
+            raise TypeError(
+            "O valor informado deve ser do tipo str ou None."
+            )
 
         valor = valor.strip()
 

@@ -229,7 +229,10 @@ cadastrais.\
 **RN-VEI-018** --- Correção inválida não modifica o estado anterior.\
 **RN-VEI-019** --- Atributos sujeitos a regras permanecem protegidos.\
 **RN-VEI-020** --- Alterações ocorrem pela interface pública.
-
+**RN-VEI-021** --- - Um veículo deve estar associado a um cliente previamente
+ cadastrado no sistema. A validação da existência do cliente cadastrado é 
+ responsabilidade da camada de aplicação/persistência, e não da entidade `Veiculo`.
+ 
 ## Interface pública
 
 Consultas: `cliente`, `marca`, `modelo`, `ano`, `placa`, `combustivel`,

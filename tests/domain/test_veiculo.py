@@ -96,3 +96,47 @@ def test_nao_deve_criar_veiculo_com_cliente_invalido() -> None:
             _marca="Fiat",
             _modelo="Uno",
         )
+
+def test_deve_rejeitar_placa_com_tipo_invalido(
+    cliente: Cliente,
+) -> None:
+    with pytest.raises(
+        TypeError,
+        match="A placa do veículo deve ser do tipo str ou None.",
+    ):
+        Veiculo(
+            _cliente=cliente,
+            _marca="Fiat",
+            _modelo="Palio",
+            _placa=123,  # ty: ignore[invalid-argument-type]
+        )
+
+def test_deve_rejeitar_combustivel_com_tipo_invalido(
+    cliente: Cliente,
+) -> None:
+    with pytest.raises(
+        TypeError,
+        match="O valor informado deve ser do tipo str ou None.",
+    ):
+        Veiculo(
+            _cliente=cliente,
+            _marca="Fiat",
+            _modelo="Palio",
+            _combustivel=123,  # ty: ignore[invalid-argument-type]
+        )
+
+def test_deve_rejeitar_observacoes_com_tipo_invalido(
+    cliente: Cliente,
+) -> None:
+    with pytest.raises(
+        TypeError,
+        match="O valor informado deve ser do tipo str ou None.",
+    ):
+        Veiculo(
+            _cliente=cliente,
+            _marca="Fiat",
+            _modelo="Palio",
+            _observacoes=123,  # ty: ignore[invalid-argument-type]
+        )
+        
+

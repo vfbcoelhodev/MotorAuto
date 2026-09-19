@@ -1,10 +1,12 @@
 import pytest
 
 from motorauto.application.services.cliente import (
+    ativar_cliente,
     atualizar_cliente,
     buscar_cliente_por_id,
     cadastrar_cliente,
-    listar_clientes, desativar_cliente, ativar_cliente,
+    desativar_cliente,
+    listar_clientes,
 )
 from motorauto.domain.entities.cliente import Cliente
 from motorauto.infrastructure.repositories.cliente_memoria import (
